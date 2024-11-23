@@ -23,18 +23,18 @@
  *
  * @param {object} target
  * @param {string} propertyName - Property or property accessor name
- * @param {*}      returnValue  - If returnValue is a method the return value will be equal the output of the given method
+ * @param {*}      returnValue  - If returnValue is a method the return value will be equal to the output of the given method
  * @returns {object}
  */
 export default function(target, propertyName, returnValue) {
 	const mock = new Mock()
-	const propertyDescriptors = getAllPropertyDescriptors(target)
+	const propertyDescriptors = getPropertyDescriptors(target)
 	if(!(propertyName in propertyDescriptors)) {
 		throw new Error(`Could not find any property descriptor for ${propertyName}`)
 	}
 	if(typeof propertyDescriptors[propertyName].value === "function") {
 		const originalMethod = target[propertyName]
-		originalMethod.__proto__.mock = mock
+		Object.getPrototypeOf(originalMethod).mock = mock
 		mock.calls = []
 		target[propertyName] = function() {
 			mock.callCount++
@@ -81,7 +81,7 @@ export default function(target, propertyName, returnValue) {
 		})
 		/** null-prototype objects do not inherit from Object.prototype */
 		if(originalValue !== null) {
-			Object.defineProperty(originalValue.__proto__, "mock", {
+			Object.defineProperty(Object.getPrototypeOf(originalValue), "mock", {
 				configurable: true,
 				get: function() {
 					mock.callCount--
@@ -91,10 +91,6 @@ export default function(target, propertyName, returnValue) {
 		}
 	}
 	return mock
-}
-
-function getAllPropertyDescriptors(obj) {
-	return getPropertyDescriptors(obj)
 }
 
 function getPropertyDescriptors(obj) {

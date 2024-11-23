@@ -1,7 +1,6 @@
 import mock from "./mock.js"
 import ava from 'node:test'
 import assert from 'node:assert'
-import { Http2ServerRequest } from "node:http2"
 
 class Parent {
 	baz(a, b) {
