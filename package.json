@@ -1,0 +1,19 @@
+{
+	"name": "@thoughtsunificator/mock",
+	"version": "0.0.1",
+	"main": "index.js",
+	"type": "module",
+	"description": "Front-end library",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/thoughtsunificator/mock.git"
+	},
+	"bugs": {
+		"url": "https://github.com/thoughtsunificator/mock/issues"
+	},
+	"author": "Romain Lebesle <oss@thoughtsunificator.me> (https://thoughtsunificator.me)",
+	"license": "MIT",
+	"scripts": {
+		"test": "node --test"
+	}
+}
