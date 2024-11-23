@@ -1,37 +1,25 @@
 # mock
 
+domodel is front-end library that organizes the user interface into models (look) and bindings (behavior) it follows the principle of separation of concerns, it also introduce elements of the observable pattern for the communication between the different parts of the user interface.
+
+## Installing
+
+``npm install @thoughtsunificator/mock --save-dev``
+
+## How to use
+
 ```javascript
-class Parent {
-	baz(a, b) {
-		return "baz123" + a + b
-	}
-	get qux() {
-		return "qux"
-	}
-}
-
-class Test extends Parent {
-	constructor() {
-		super()
-		this.foo = "foo"
-		this.foo3 = null
-	}
-	get bar() {
-		return "bar"
-	}
-	get foo2() {
-		return this.foo
-	}
-}
-
-const test = new Test()
-const mockProperty = mock(test, "bar")
-assert.strictEqual(test.bar, "bar")
-assert.strictEqual(test.bar.mock.callCount, 1)
-assert.strictEqual(test.bar.mock.called, true)
-const mockMethod = mock(test, "baz")
-assert.strictEqual(test.baz("foo", "bar"), "baz123foobar")
-assert.strictEqual(test.baz.mock.callCount, 1)
+import mock  from "@thoughtsunificator/mock"
+// ...
+// Mock a a property
+const mockProperty = mock(obj, "bar")
+assert.strictEqual(obj.bar, "bar")
+assert.strictEqual(obj.bar.mock.callCount, 1)
+assert.strictEqual(obj.bar.mock.called, true)
+// Mock a method
+const mockMethod = mock(obj, "baz")
+assert.strictEqual(obj.baz("foo", "bar"), "baz123foobar")
+assert.strictEqual(obj.baz.mock.callCount, 1)
 assert.strictEqual(mockMethod.callCount, 1)
 assert.strictEqual(mockMethod.called, true)
 ```
