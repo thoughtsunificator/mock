@@ -1,6 +1,6 @@
 # mock
 
-domodel is front-end library that organizes the user interface into models (look) and bindings (behavior) it follows the principle of separation of concerns, it also introduce elements of the observable pattern for the communication between the different parts of the user interface.
+mock module
 
 ## Installing
 
@@ -9,7 +9,7 @@ domodel is front-end library that organizes the user interface into models (look
 ## How to use
 
 ```javascript
-import mock  from "@thoughtsunificator/mock"
+import mock from "@thoughtsunificator/mock"
 // ...
 // Mock a a property
 const mockProperty = mock(obj, "bar")

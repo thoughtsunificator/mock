@@ -63,7 +63,6 @@ export default function(target, propertyName, returnValue) {
 				}
 			}
 		}
-		const originalProperty = structuredClone(originalValue)
 		Object.defineProperty(target, propertyName, {
 			enumerable: true,
 			configurable: true,
@@ -76,11 +75,11 @@ export default function(target, propertyName, returnValue) {
 						return returnValue
 					}
 				} else {
-					return originalProperty
+					return originalValue
 				}
 			}
 		})
-		/** Does not work when originalValue is null */
+		/** null-prototype objects do not inherit from Object.prototype */
 		if(originalValue !== null) {
 			Object.defineProperty(originalValue.__proto__, "mock", {
 				configurable: true,
