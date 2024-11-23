@@ -1,1 +1,1 @@
-export { default as mock } from "./src/mock.js"
+export { default as default } from "./src/mock.js"
