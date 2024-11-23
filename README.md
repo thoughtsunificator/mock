@@ -26,8 +26,12 @@ class Test extends Parent {
 
 const test = new Test()
 const mockProperty = mock(test, "bar")
-assert.strictEqual(test.bar.mock, mockProperty)
-assert.strictEqual(test.bar.mock.callCount, 0)
-assert.strictEqual(test.bar.mock.called, false)
 assert.strictEqual(test.bar, "bar")
+assert.strictEqual(test.bar.mock.callCount, 1)
+assert.strictEqual(test.bar.mock.called, true)
+const mockMethod = mock(test, "baz")
+assert.strictEqual(test.baz("foo", "bar"), "baz123foobar")
+assert.strictEqual(test.baz.mock.callCount, 1)
+assert.strictEqual(mockMethod.callCount, 1)
+assert.strictEqual(mockMethod.called, true)
 ```
