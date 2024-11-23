@@ -41,12 +41,12 @@ export default function(target, propertyName, returnValue) {
 			let callReturnValue
 			if(returnValue) {
 				if(typeof returnValue === "function") {
-					callReturnValue = returnValue.call(this, ...arguments)
+					callReturnValue = returnValue.apply(this, arguments)
 				} else {
 					callReturnValue = returnValue
 				}
 			} else {
-				callReturnValue = originalMethod.call(this, ...arguments)
+				callReturnValue = originalMethod.apply(this, arguments)
 			}
 			mock.calls.push({ arguments, this: this, returnValue: callReturnValue })
 			return callReturnValue

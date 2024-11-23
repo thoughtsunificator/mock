@@ -1,6 +1,7 @@
 import mock from "./mock.js"
 import ava from 'node:test'
 import assert from 'node:assert'
+import { Http2ServerRequest } from "node:http2"
 
 class Parent {
 	baz(a, b) {
@@ -72,7 +73,7 @@ ava("mock non-existing property", (test) => {
 	}, { message: "Could not find any property descriptor for dsadsa" })
 })
 
-ava("mock property spec", (test) => {
+ava("mock property returnValue", (test) => {
 	const { obj } = test
 	mock(obj, "bar", "123")
 	assert.strictEqual(obj.bar, "123")
@@ -94,6 +95,18 @@ ava("mock method", (test) => {
 	assert.strictEqual(mockMethod.called, true)
 })
 
+ava("mock method returnValue", (test) => {
+	const { obj } = test
+	mock(obj, "baz", "123")
+	assert.strictEqual(obj.baz(), "123")
+	mock(obj, "baz",  () => "1234")
+	assert.strictEqual(obj.baz(),"1234")
+	mock(obj, "baz",  function() {
+		return this.foo2
+	})
+	assert.strictEqual(obj.baz(),"foo")
+})
+
 ava("mock calls", (test) => {
 	const { obj } = test
 	const mockMethod = mock(obj, "baz")
@@ -113,12 +126,15 @@ ava("mock calls", (test) => {
 	assert.deepEqual([...mockMethod2.calls[0].arguments], ["foo", "bar"])
 	assert.deepEqual(mockMethod2.calls[0].returnValue, "abc")
 	assert.deepEqual(mockMethod2.calls[0].this, obj)
-})
-
-ava("mock method spec", (test) => {
-	const { obj } = test
-	mock(obj, "baz", "123")
-	assert.strictEqual(obj.baz(), "123")
+	const test2 = new Test()
+	obj.baz(test2)
+	assert.strictEqual(obj.baz.mock.calls[1].arguments[0], test2)
+	const url = new URL("http://local")
+	obj.baz(url)
+	assert.strictEqual(obj.baz.mock.calls[2].arguments[0], url)
+	const date = new Date()
+	obj.baz(date)
+	assert.strictEqual(obj.baz.mock.calls[3].arguments[0], date)
 })
 
 ava("redefine property", (test) => {
