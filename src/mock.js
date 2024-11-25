@@ -52,30 +52,33 @@ export default function(target, propertyName, returnValue) {
 		}
 		target[propertyName].mock = mock
 	} else {
-		let originalValue
+		let propertyAccessor
 		for(const name in propertyDescriptors) {
 			if(name === propertyName) {
-				const propertyAccessor = propertyDescriptors[name]
-				if(propertyAccessor.get) {
-					originalValue = propertyAccessor.get.call(target)
-				} else {
-					originalValue = propertyAccessor.value
-				}
+				propertyAccessor = propertyDescriptors[name]
 			}
 		}
 		Object.defineProperty(target, propertyName, {
-			enumerable: true,
+			enumerable: propertyAccessor.enumerable,
 			configurable: true,
 			get: function() {
 				mock.callCount++
 				if(returnValue) {
 					if(typeof returnValue === "function") {
-						return returnValue(originalValue)
+						if(propertyAccessor.get) {
+							return returnValue(propertyAccessor.get.call(target))
+						} else {
+							return returnValue(propertyAccessor.value)
+						}
 					} else {
 						return returnValue
 					}
 				} else {
-					return originalValue
+					if(propertyAccessor.get) {
+						return propertyAccessor.get.call(target)
+					} else {
+						return propertyAccessor.value
+					}
 				}
 			}
 		})
