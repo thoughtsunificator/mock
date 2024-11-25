@@ -70,7 +70,7 @@ export default function(target, propertyName, returnValue) {
 				mock.callCount++
 				if(returnValue) {
 					if(typeof returnValue === "function") {
-						return returnValue()
+						return returnValue(originalValue)
 					} else {
 						return returnValue
 					}
@@ -79,16 +79,6 @@ export default function(target, propertyName, returnValue) {
 				}
 			}
 		})
-		/** null-prototype objects do not inherit from Object.prototype */
-		if(originalValue !== null) {
-			Object.defineProperty(Object.getPrototypeOf(originalValue), "mock", {
-				configurable: true,
-				get: function() {
-					mock.callCount--
-					return mock
-				}
-			})
-		}
 	}
 	return mock
 }

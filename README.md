@@ -14,8 +14,8 @@ import mock from "@thoughtsunificator/mock"
 // Mock a a property
 const mockProperty = mock(obj, "bar")
 assert.strictEqual(obj.bar, "bar")
-assert.strictEqual(obj.bar.mock.callCount, 1)
-assert.strictEqual(obj.bar.mock.called, true)
+assert.strictEqual(mockProperty.callCount, 1)
+assert.strictEqual(mockProperty.called, true)
 // Mock a method
 const mockMethod = mock(obj, "baz")
 assert.strictEqual(obj.baz("foo", "bar"), "baz123foobar")
