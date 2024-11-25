@@ -34,7 +34,6 @@ export default function(target, propertyName, returnValue) {
 	}
 	if(typeof propertyDescriptors[propertyName].value === "function") {
 		const originalMethod = target[propertyName]
-		Object.getPrototypeOf(originalMethod).mock = mock
 		mock.calls = []
 		target[propertyName] = function() {
 			mock.callCount++
@@ -51,6 +50,7 @@ export default function(target, propertyName, returnValue) {
 			mock.calls.push({ arguments, this: this, returnValue: callReturnValue })
 			return callReturnValue
 		}
+		target[propertyName].mock = mock
 	} else {
 		let originalValue
 		for(const name in propertyDescriptors) {
