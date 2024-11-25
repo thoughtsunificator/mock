@@ -66,9 +66,9 @@ export default function(target, propertyName, returnValue) {
 				if(returnValue) {
 					if(typeof returnValue === "function") {
 						if(propertyAccessor.get) {
-							return returnValue(propertyAccessor.get.call(target))
+							return returnValue(propertyAccessor)
 						} else {
-							return returnValue(propertyAccessor.value)
+							return returnValue(propertyAccessor)
 						}
 					} else {
 						return returnValue
