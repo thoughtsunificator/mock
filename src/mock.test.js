@@ -80,6 +80,9 @@ ava("mock property returnValue", (test) => {
 
 ava("mock method", (test) => {
 	const { obj } = test
+	const obj2 = new Test()
+	mock(obj2, "baz")
+	assert.strictEqual(obj.baz.mock, undefined)
 	const mockMethod = mock(obj, "baz")
 	assert.strictEqual(obj.baz.mock, mockMethod)
 	assert.strictEqual(obj.baz.mock.callCount, 0)
