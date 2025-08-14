@@ -28,6 +28,12 @@ class Test extends Parent {
 		return this.foo
 	}
 
+	recursive(callSelf) {
+		if(callSelf) {
+			this.recursive()
+		}
+	}
+
 }
 
 ava.beforeEach((test) => {
@@ -111,7 +117,7 @@ ava("mock calls", (test) => {
 	obj.baz("foo", "bar")
 	assert.strictEqual(mockMethod.calls.length, 1)
 	assert.deepEqual([...mockMethod.calls[0].arguments], ["foo", "bar"])
-	assert.deepEqual(mockMethod.calls[0].returnValue, "baz123foobar")
+	assert.strictEqual(mockMethod.calls[0].returnValue, "baz123foobar")
 	assert.deepEqual(mockMethod.calls[0].this, obj)
 	obj.baz("foo", "bar2")
 	assert.strictEqual(mockMethod.calls.length, 2)
@@ -132,6 +138,15 @@ ava("mock calls", (test) => {
 	const date = new Date()
 	obj.baz(date)
 	assert.strictEqual(obj.baz.mock.calls[3].arguments[0], date)
+})
+
+ava("mock calls recursive", test => {
+	const { obj } = test
+	const mockMethod = mock(obj, "recursive")
+	obj.recursive(true)
+	assert.strictEqual(mockMethod.calls.length, 2)
+	assert.deepEqual([...mockMethod.calls[0].arguments], [true])
+	assert.deepEqual([...mockMethod.calls[1].arguments], [])
 })
 
 ava("redefine property", (test) => {
