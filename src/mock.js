@@ -36,19 +36,19 @@ export default function(target, propertyName, returnValue) {
 		const originalMethod = target[propertyName]
 		mock.calls = []
 		target[propertyName] = function() {
+			const mockCall = { arguments, this: this }
 			mock.callCount++
-			let callReturnValue
+			mock.calls.push(mockCall)
 			if(returnValue) {
 				if(typeof returnValue === "function") {
-					callReturnValue = returnValue.apply(this, arguments)
+					mockCall.returnValue = returnValue.apply(this, arguments)
 				} else {
-					callReturnValue = returnValue
+					mockCall.returnValue = returnValue
 				}
 			} else {
-				callReturnValue = originalMethod.apply(this, arguments)
+				mockCall.returnValue = originalMethod.apply(this, arguments)
 			}
-			mock.calls.push({ arguments, this: this, returnValue: callReturnValue })
-			return callReturnValue
+			return mockCall.returnValue
 		}
 		target[propertyName].mock = mock
 	} else {
