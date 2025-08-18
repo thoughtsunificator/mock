@@ -77,6 +77,8 @@ ava("mock property returnValue", (test) => {
 	const { obj } = test
 	mock(obj, "bar", "123")
 	assert.strictEqual(obj.bar, "123")
+	mock(obj, "bar", null)
+	assert.strictEqual(obj.bar, null)
 })
 
 ava("mock method", (test) => {
@@ -108,6 +110,8 @@ ava("mock method returnValue", (test) => {
 		return this.foo2
 	})
 	assert.strictEqual(obj.baz(),"foo")
+	mock(obj, "baz",  null)
+	assert.strictEqual(obj.baz(), null)
 })
 
 ava("mock calls", (test) => {
