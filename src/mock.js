@@ -39,7 +39,7 @@ export default function(target, propertyName, returnValue) {
 			const mockCall = { arguments, this: this }
 			mock.callCount++
 			mock.calls.push(mockCall)
-			if(returnValue) {
+			if(returnValue !== undefined) {
 				if(typeof returnValue === "function") {
 					mockCall.returnValue = returnValue.apply(this, arguments)
 				} else {
@@ -63,7 +63,7 @@ export default function(target, propertyName, returnValue) {
 			configurable: true,
 			get: function() {
 				mock.callCount++
-				if(returnValue) {
+				if(returnValue !== undefined) {
 					if(typeof returnValue === "function") {
 						if(propertyAccessor.get) {
 							return returnValue(propertyAccessor)
