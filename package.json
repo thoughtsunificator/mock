@@ -14,6 +14,7 @@
 	"author": "Romain Lebesle <oss@thoughtsunificator.me> (https://thoughtsunificator.me)",
 	"license": "MIT",
 	"scripts": {
-		"test": "node --test"
+		"test": "node --test",
+		"test:debug": "node inspect --test"
 	}
 }
