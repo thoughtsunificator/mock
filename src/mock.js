@@ -10,6 +10,9 @@
  *	console.log(mockProperty.callCount)
  */
 
+export { mock }
+export default mock // Only here for compatibility purposes
+
  class Mock {
 	constructor() {
 		this.callCount = 0
@@ -26,7 +29,7 @@
  * @param {*}      returnValue  - If returnValue is a method the return value will be equal to the output of the given method
  * @returns {object}
  */
-export default function(target, propertyName, returnValue) {
+function mock(target, propertyName, returnValue) {
 	const mock = new Mock()
 	const propertyDescriptors = getPropertyDescriptors(target)
 	if(!(propertyName in propertyDescriptors)) {
