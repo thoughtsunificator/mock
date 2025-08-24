@@ -1,6 +1,5 @@
 import mock from "./mock.js"
-import ava from 'node:test'
-import assert from 'node:assert'
+import ava from "ava"
 
 class Parent {
 	baz(a, b) {
@@ -37,136 +36,145 @@ class Test extends Parent {
 }
 
 ava.beforeEach((test) => {
-	test.obj = new Test()
+	test.context.obj = new Test()
 })
 
 ava("mock property", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	const obj2 = new Test()
 	const mockProperty = mock(obj, "bar")
-	assert.strictEqual(obj.bar, "bar")
+	test.is(obj.bar, "bar")
 	mock(obj2, "bar") // reset to 0. when it should not. this is because mock is on the property's prototype
-	assert.strictEqual(obj.bar, "bar")
-	assert.strictEqual(mockProperty.callCount, 2)
-	assert.strictEqual(mockProperty.called, true)
+	test.is(obj.bar, "bar")
+	test.is(mockProperty.callCount, 2)
+	test.is(mockProperty.called, true)
 	const mockProperty2 = mock(obj, "qux")
-	assert.strictEqual(mockProperty2.callCount, 0)
-	assert.strictEqual(mockProperty2.called, false)
-	assert.strictEqual(obj.qux, "qux")
-	assert.strictEqual(mockProperty2.callCount, 1)
-	assert.strictEqual(mockProperty2.called, true)
+	test.is(mockProperty2.callCount, 0)
+	test.is(mockProperty2.called, false)
+	test.is(obj.qux, "qux")
+	test.is(mockProperty2.callCount, 1)
+	test.is(mockProperty2.called, true)
 	const mockProperty3 = mock(obj, "foo2")
-	assert.strictEqual(obj.foo2, "foo")
-	assert.strictEqual(mockProperty3.callCount, 1)
-	assert.strictEqual(mockProperty3.called, true)
+	test.is(obj.foo2, "foo")
+	test.is(mockProperty3.callCount, 1)
+	test.is(mockProperty3.called, true)
 	const mockProperty4 = mock(obj, "foo3")
-	assert.strictEqual(mockProperty4.callCount, 0)
-	assert.strictEqual(obj.foo3, null)
-	assert.strictEqual(mockProperty4.callCount, 1)
-	assert.strictEqual(mockProperty4.called, true)
+	test.is(mockProperty4.callCount, 0)
+	test.is(obj.foo3, null)
+	test.is(mockProperty4.callCount, 1)
+	test.is(mockProperty4.called, true)
 })
 
 ava("mock non-existing property", (test) => {
-	const { obj } = test
-	assert.throws(() => {
+	const { obj } = test.context
+	test.throws(() => {
 		mock(obj, "dsadsa")
 	}, { message: "Could not find any property descriptor for dsadsa" })
 })
 
 ava("mock property returnValue", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	mock(obj, "bar", "123")
-	assert.strictEqual(obj.bar, "123")
+	test.is(obj.bar, "123")
 	mock(obj, "bar", null)
-	assert.strictEqual(obj.bar, null)
+	test.is(obj.bar, null)
 })
 
 ava("mock method", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	const obj2 = new Test()
 	mock(obj2, "baz")
-	assert.strictEqual(obj.baz.mock, undefined)
+	test.is(obj.baz.mock, undefined)
 	const mockMethod = mock(obj, "baz")
-	assert.strictEqual(obj.baz.mock, mockMethod)
-	assert.strictEqual(obj.baz.mock.callCount, 0)
-	assert.strictEqual(mockMethod.callCount, 0)
-	assert.strictEqual(mockMethod.called, false)
-	assert.strictEqual(obj.baz("foo", "bar"), "baz123foobar")
-	assert.strictEqual(obj.baz.mock.callCount, 1)
-	assert.strictEqual(mockMethod.callCount, 1)
-	assert.strictEqual(mockMethod.called, true)
-	assert.strictEqual(obj.baz("foo2", "bar2"), "baz123foo2bar2")
-	assert.strictEqual(mockMethod.callCount, 2)
-	assert.strictEqual(mockMethod.called, true)
+	test.is(obj.baz.mock, mockMethod)
+	test.is(obj.baz.mock.callCount, 0)
+	test.is(mockMethod.callCount, 0)
+	test.is(mockMethod.called, false)
+	test.is(obj.baz("foo", "bar"), "baz123foobar")
+	test.is(obj.baz.mock.callCount, 1)
+	test.is(mockMethod.callCount, 1)
+	test.is(mockMethod.called, true)
+	test.is(obj.baz("foo2", "bar2"), "baz123foo2bar2")
+	test.is(mockMethod.callCount, 2)
+	test.is(mockMethod.called, true)
 })
 
 ava("mock method returnValue", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	mock(obj, "baz", "123")
-	assert.strictEqual(obj.baz(), "123")
+	test.is(obj.baz(), "123")
 	mock(obj, "baz",  () => "1234")
-	assert.strictEqual(obj.baz(),"1234")
+	test.is(obj.baz(),"1234")
 	mock(obj, "baz",  function() {
 		return this.foo2
 	})
-	assert.strictEqual(obj.baz(),"foo")
+	test.is(obj.baz(),"foo")
 	mock(obj, "baz",  null)
-	assert.strictEqual(obj.baz(), null)
+	test.is(obj.baz(), null)
 })
 
 ava("mock calls", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	const mockMethod = mock(obj, "baz")
-	assert.strictEqual(mockMethod.calls.length, 0)
+	test.is(mockMethod.calls.length, 0)
 	obj.baz("foo", "bar")
-	assert.strictEqual(mockMethod.calls.length, 1)
-	assert.deepEqual([...mockMethod.calls[0].arguments], ["foo", "bar"])
-	assert.strictEqual(mockMethod.calls[0].returnValue, "baz123foobar")
-	assert.deepEqual(mockMethod.calls[0].this, obj)
+	test.is(mockMethod.calls.length, 1)
+	test.deepEqual([...mockMethod.calls[0].arguments], ["foo", "bar"])
+	test.is(mockMethod.calls[0].returnValue, "baz123foobar")
+	test.deepEqual(mockMethod.calls[0].this, obj)
 	obj.baz("foo", "bar2")
-	assert.strictEqual(mockMethod.calls.length, 2)
-	assert.deepEqual([...mockMethod.calls[1].arguments], ["foo", "bar2"])
+	test.is(mockMethod.calls.length, 2)
+	test.deepEqual([...mockMethod.calls[1].arguments], ["foo", "bar2"])
 	const mockMethod2 = mock(obj, "baz", "abc")
-	assert.strictEqual(mockMethod2.calls.length, 0)
+	test.is(mockMethod2.calls.length, 0)
 	obj.baz("foo", "bar")
-	assert.strictEqual(mockMethod2.calls.length, 1)
-	assert.deepEqual([...mockMethod2.calls[0].arguments], ["foo", "bar"])
-	assert.deepEqual(mockMethod2.calls[0].returnValue, "abc")
-	assert.deepEqual(mockMethod2.calls[0].this, obj)
+	test.is(mockMethod2.calls.length, 1)
+	test.deepEqual([...mockMethod2.calls[0].arguments], ["foo", "bar"])
+	test.deepEqual(mockMethod2.calls[0].returnValue, "abc")
+	test.deepEqual(mockMethod2.calls[0].this, obj)
 	const test2 = new Test()
 	obj.baz(test2)
-	assert.strictEqual(obj.baz.mock.calls[1].arguments[0], test2)
+	test.is(obj.baz.mock.calls[1].arguments[0], test2)
 	const url = new URL("http://local")
 	obj.baz(url)
-	assert.strictEqual(obj.baz.mock.calls[2].arguments[0], url)
+	test.is(obj.baz.mock.calls[2].arguments[0], url)
 	const date = new Date()
 	obj.baz(date)
-	assert.strictEqual(obj.baz.mock.calls[3].arguments[0], date)
+	test.is(obj.baz.mock.calls[3].arguments[0], date)
 })
 
 ava("mock calls recursive", test => {
-	const { obj } = test
+	const { obj } = test.context
 	const mockMethod = mock(obj, "recursive")
 	obj.recursive(true)
-	assert.strictEqual(mockMethod.calls.length, 2)
-	assert.deepEqual([...mockMethod.calls[0].arguments], [true])
-	assert.deepEqual([...mockMethod.calls[1].arguments], [])
+	test.is(mockMethod.calls.length, 2)
+	test.deepEqual([...mockMethod.calls[0].arguments], [true])
+	test.deepEqual([...mockMethod.calls[1].arguments], [])
 })
 
 ava("redefine property", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	const mockProperty = mock(obj, "bar", "123")
 	const mockProperty2 = mock(obj, "bar", "1234")
-	assert.strictEqual(obj.bar, "1234")
-	assert.strictEqual(mockProperty.callCount, 0)
-	assert.strictEqual(mockProperty2.callCount, 1)
+	test.is(obj.bar, "1234")
+	test.is(mockProperty.callCount, 0)
+	test.is(mockProperty2.callCount, 1)
 })
 
 ava("redefine method", (test) => {
-	const { obj } = test
+	const { obj } = test.context
 	const mockMethod = mock(obj, "baz", "123")
 	const mockMethod2 = mock(obj, "baz", "1234")
-	assert.strictEqual(obj.baz(), "1234")
-	assert.strictEqual(mockMethod.callCount, 0)
-	assert.strictEqual(mockMethod2.callCount, 1)
+	test.is(obj.baz(), "1234")
+	test.is(mockMethod.callCount, 0)
+	test.is(mockMethod2.callCount, 1)
+})
+
+ava("mock the same method twice and unset its returnValue", (test) => {
+	const { obj } = test.context
+	mock(obj, "baz", "123")
+	mock(obj, "baz")
+	test.is(obj.baz(4,5), "baz12345")
+	mock(obj, "baz")
+	test.is(obj.baz(4,5), "baz12345")
 })

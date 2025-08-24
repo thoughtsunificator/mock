@@ -14,7 +14,11 @@
 	"author": "Romain Lebesle <oss@thoughtsunificator.me> (https://thoughtsunificator.me)",
 	"license": "MIT",
 	"scripts": {
-		"test": "node --test",
-		"test:debug": "node inspect --test"
+		"test": "ava --config .ava.js",
+		"test:unit:debug": "concurrently --kill-others --passthrough-arguments --raw 'ava debug --config .ava.js {@}' 'node inspect 127.0.0.1:9229' --"
+	},
+	"devDependencies": {
+		"ava": "6.4.1",
+		"concurrently": "9.2.0"
 	}
 }
