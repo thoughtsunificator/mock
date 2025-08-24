@@ -170,6 +170,15 @@ ava("redefine method", (test) => {
 	test.is(mockMethod2.callCount, 1)
 })
 
+ava("original", (test) => {
+	const { obj } = test.context
+	const objBaz = obj.baz
+	mock(obj, "baz", "123")
+	test.is(obj.baz.mock.original, objBaz)
+	mock(obj, "baz", "1234")
+	test.is(obj.baz.mock.original, objBaz)
+})
+
 ava("mock the same method twice and unset its returnValue", (test) => {
 	const { obj } = test.context
 	mock(obj, "baz", "123")

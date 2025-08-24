@@ -36,7 +36,13 @@ function mock(target, propertyName, returnValue) {
 		throw new Error(`Could not find any property descriptor for ${propertyName}`)
 	}
 	if(typeof propertyDescriptors[propertyName].value === "function") {
-		const originalMethod = target[propertyName]
+		let originalMethod = target[propertyName]
+		if(originalMethod.mock) {
+			mock.original = originalMethod.mock.original
+			originalMethod = mock.original
+		} else {
+			mock.original = originalMethod
+		}
 		mock.calls = []
 		target[propertyName] = function() {
 			const mockCall = { arguments, this: this }
