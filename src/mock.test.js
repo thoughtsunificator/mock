@@ -187,3 +187,30 @@ ava("mock the same method twice and unset its returnValue", (test) => {
 	mock(obj, "baz")
 	test.is(obj.baz(4,5), "baz12345")
 })
+
+ava("throw when target is not a non-null object", test => {
+	test.throws(() => {
+		mock(null, "foo")
+	}, { message: "Expected target parameter to be a non-null object, got null" })
+	test.throws(() => {
+		mock(Symbol(), "foo")
+	}, { message: "Expected target parameter to be a non-null object, got symbol" })
+	test.throws(() => {
+		mock(() => {}, "foo")
+	}, { message: "Expected target parameter to be a non-null object, got function" })
+	test.throws(() => {
+		mock(true, "foo")
+	}, { message: "Expected target parameter to be a non-null object, got boolean" })
+	test.throws(() => {
+		mock("dsa", "foo")
+	}, { message: "Expected target parameter to be a non-null object, got string" })
+	test.throws(() => {
+		mock(false, "foo")
+	}, { message: "Expected target parameter to be a non-null object, got boolean" })
+	test.throws(() => {
+		mock(1, "foo")
+	}, { message: "Expected target parameter to be a non-null object, got number" })
+	test.throws(() => {
+		mock(undefined, "foo")
+	}, { message: "Expected target parameter to be a non-null object, got undefined" })
+})

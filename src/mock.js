@@ -31,6 +31,10 @@ export default mock // Only here for compatibility purposes
  */
 function mock(target, propertyName, returnValue) {
 	const mock = new Mock()
+	const targetType = typeof target
+	if(target === null || targetType !== "object") {
+		throw new Error(`Expected target parameter to be a non-null object, got ${target === null ? null : targetType}`)
+	}
 	const propertyDescriptors = getPropertyDescriptors(target)
 	if(!(propertyName in propertyDescriptors)) {
 		throw new Error(`Could not find any property descriptor for ${propertyName}`)
