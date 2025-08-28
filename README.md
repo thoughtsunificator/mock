@@ -47,13 +47,13 @@ assert.strictEqual(obj.bar.mock.called, true)
 ```javascript
 import mock from "@thoughtsunificator/mock"
 
-const mockMethod = mock(obj, "baz")
+const mockFunction = mock(obj, "baz")
 assert.strictEqual(obj.baz("foo", "bar"), "baz123foobar")
 assert.strictEqual(obj.baz.mock.callCount, 1)
-assert.strictEqual(mockMethod.callCount, 1)
-assert.strictEqual(mockMethod.called, true)
-assert.strictEqual(mockMethod.calls[0].arguments[0], "foo")
-assert.strictEqual(mockMethod.calls[0].arguments[1], "bar")
+assert.strictEqual(mockFunction.callCount, 1)
+assert.strictEqual(mockFunction.called, true)
+assert.strictEqual(mockFunction.calls[0].arguments[0], "foo")
+assert.strictEqual(mockFunction.calls[0].arguments[1], "bar")
 ```
 
 

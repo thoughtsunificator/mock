@@ -6,6 +6,15 @@ class Parent {
 		return "baz123" + a + b
 	}
 
+	get abc() {
+		return this._abc
+	}
+
+	set abc(abc) {
+		debugger
+		this._abc = abc + "test"
+	}
+
 	get qux() {
 		return "qux"
 	}
@@ -85,18 +94,18 @@ ava("mock method", (test) => {
 	const obj2 = new Test()
 	mock(obj2, "baz")
 	test.is(obj.baz.mock, undefined)
-	const mockMethod = mock(obj, "baz")
-	test.is(obj.baz.mock, mockMethod)
+	const mockFunction = mock(obj, "baz")
+	test.is(obj.baz.mock, mockFunction)
 	test.is(obj.baz.mock.callCount, 0)
-	test.is(mockMethod.callCount, 0)
-	test.is(mockMethod.called, false)
+	test.is(mockFunction.callCount, 0)
+	test.is(mockFunction.called, false)
 	test.is(obj.baz("foo", "bar"), "baz123foobar")
 	test.is(obj.baz.mock.callCount, 1)
-	test.is(mockMethod.callCount, 1)
-	test.is(mockMethod.called, true)
+	test.is(mockFunction.callCount, 1)
+	test.is(mockFunction.called, true)
 	test.is(obj.baz("foo2", "bar2"), "baz123foo2bar2")
-	test.is(mockMethod.callCount, 2)
-	test.is(mockMethod.called, true)
+	test.is(mockFunction.callCount, 2)
+	test.is(mockFunction.called, true)
 })
 
 ava("mock method returnValue", (test) => {
@@ -115,23 +124,23 @@ ava("mock method returnValue", (test) => {
 
 ava("mock calls", (test) => {
 	const { obj } = test.context
-	const mockMethod = mock(obj, "baz")
-	test.is(mockMethod.calls.length, 0)
+	const mockFunction = mock(obj, "baz")
+	test.is(mockFunction.calls.length, 0)
 	obj.baz("foo", "bar")
-	test.is(mockMethod.calls.length, 1)
-	test.deepEqual([...mockMethod.calls[0].arguments], ["foo", "bar"])
-	test.is(mockMethod.calls[0].returnValue, "baz123foobar")
-	test.deepEqual(mockMethod.calls[0].this, obj)
+	test.is(mockFunction.calls.length, 1)
+	test.deepEqual([...mockFunction.calls[0].arguments], ["foo", "bar"])
+	test.is(mockFunction.calls[0].returnValue, "baz123foobar")
+	test.deepEqual(mockFunction.calls[0].this, obj)
 	obj.baz("foo", "bar2")
-	test.is(mockMethod.calls.length, 2)
-	test.deepEqual([...mockMethod.calls[1].arguments], ["foo", "bar2"])
-	const mockMethod2 = mock(obj, "baz", "abc")
-	test.is(mockMethod2.calls.length, 0)
+	test.is(mockFunction.calls.length, 2)
+	test.deepEqual([...mockFunction.calls[1].arguments], ["foo", "bar2"])
+	const mockFunction2 = mock(obj, "baz", "abc")
+	test.is(mockFunction2.calls.length, 0)
 	obj.baz("foo", "bar")
-	test.is(mockMethod2.calls.length, 1)
-	test.deepEqual([...mockMethod2.calls[0].arguments], ["foo", "bar"])
-	test.deepEqual(mockMethod2.calls[0].returnValue, "abc")
-	test.deepEqual(mockMethod2.calls[0].this, obj)
+	test.is(mockFunction2.calls.length, 1)
+	test.deepEqual([...mockFunction2.calls[0].arguments], ["foo", "bar"])
+	test.deepEqual(mockFunction2.calls[0].returnValue, "abc")
+	test.deepEqual(mockFunction2.calls[0].this, obj)
 	const test2 = new Test()
 	obj.baz(test2)
 	test.is(obj.baz.mock.calls[1].arguments[0], test2)
@@ -145,11 +154,11 @@ ava("mock calls", (test) => {
 
 ava("mock calls recursive", test => {
 	const { obj } = test.context
-	const mockMethod = mock(obj, "recursive")
+	const mockFunction = mock(obj, "recursive")
 	obj.recursive(true)
-	test.is(mockMethod.calls.length, 2)
-	test.deepEqual([...mockMethod.calls[0].arguments], [true])
-	test.deepEqual([...mockMethod.calls[1].arguments], [])
+	test.is(mockFunction.calls.length, 2)
+	test.deepEqual([...mockFunction.calls[0].arguments], [true])
+	test.deepEqual([...mockFunction.calls[1].arguments], [])
 })
 
 ava("redefine property", (test) => {
@@ -163,11 +172,11 @@ ava("redefine property", (test) => {
 
 ava("redefine method", (test) => {
 	const { obj } = test.context
-	const mockMethod = mock(obj, "baz", "123")
-	const mockMethod2 = mock(obj, "baz", "1234")
+	const mockFunction = mock(obj, "baz", "123")
+	const mockFunction2 = mock(obj, "baz", "1234")
 	test.is(obj.baz(), "1234")
-	test.is(mockMethod.callCount, 0)
-	test.is(mockMethod2.callCount, 1)
+	test.is(mockFunction.callCount, 0)
+	test.is(mockFunction2.callCount, 1)
 })
 
 ava("original", (test) => {
@@ -213,4 +222,18 @@ ava("throw when target is not a non-null object", test => {
 	test.throws(() => {
 		mock(undefined, "foo")
 	}, { message: "Expected target parameter to be a non-null object, got undefined" })
+})
+
+ava("Override mock returnValue of a property accessor value", test => {
+	const { obj } = test.context
+	mock(obj, "foo3", "foo")
+	obj.foo3 = "bar"
+	test.is(obj.foo3, "bar")
+})
+
+ava("Override mock returnValue of a property accessor setter", test => {
+	const { obj } = test.context
+	mock(obj, "abc", "foo")
+	obj.abc = "bar"
+	test.is(obj.abc, "bartest")
 })
