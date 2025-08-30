@@ -1,5 +1,5 @@
 /**
- * @module mock
+ * @module test/mock
  * @example
  *  // ...
  *	const mockFunction = mock(test, "foo")
@@ -68,6 +68,9 @@ function mock(target, propertyName, returnValue) {
 			if(mock.returnValue !== undefined) {
 				if(typeof mock.returnValue === "function") {
 					mockCall.returnValue = mock.returnValue.apply(this, arguments)
+					if(mockCall.returnValue === true) { // passthrough
+						originalMethod.apply(this, arguments)
+					}
 				} else {
 					mockCall.returnValue = mock.returnValue
 				}
@@ -111,8 +114,7 @@ function mock(target, propertyName, returnValue) {
 		}
 		if(typeof propertyAccessor.set === "function")  {
 			newPropertyAccessor.set = function(value) {
-				propertyAccessor.set.call(this, value)
-				mock.returnValue = propertyAccessor.value
+				mock.returnValue = value
 			}
 		} else if(propertyAccessor.writable) {
 			newPropertyAccessor.set = function(value) {

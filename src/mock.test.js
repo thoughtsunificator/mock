@@ -6,12 +6,15 @@ class Parent {
 		return "baz123" + a + b
 	}
 
+	quux() {
+		this.foo = "quux"
+	}
+
 	get abc() {
 		return this._abc
 	}
 
 	set abc(abc) {
-		debugger
 		this._abc = abc + "test"
 	}
 
@@ -24,7 +27,7 @@ class Parent {
 class Test extends Parent {
 	constructor() {
 		super()
-		this.foo = "foo"
+		this.foo = null
 		this.foo3 = null
 	}
 
@@ -64,7 +67,7 @@ ava("mock property", (test) => {
 	test.is(mockProperty2.callCount, 1)
 	test.is(mockProperty2.called, true)
 	const mockProperty3 = mock(obj, "foo2")
-	test.is(obj.foo2, "foo")
+	test.is(obj.foo2, null)
 	test.is(mockProperty3.callCount, 1)
 	test.is(mockProperty3.called, true)
 	const mockProperty4 = mock(obj, "foo3")
@@ -117,7 +120,7 @@ ava("mock method returnValue", (test) => {
 	mock(obj, "baz",  function() {
 		return this.foo2
 	})
-	test.is(obj.baz(),"foo")
+	test.is(obj.baz(), null)
 	mock(obj, "baz",  null)
 	test.is(obj.baz(), null)
 })
@@ -235,5 +238,21 @@ ava("Override mock returnValue of a property accessor setter", test => {
 	const { obj } = test.context
 	mock(obj, "abc", "foo")
 	obj.abc = "bar"
-	test.is(obj.abc, "bartest")
+	test.is(obj.abc, "bar")
+})
+
+ava("Redefine method passthrough/allow side effects", test => {
+	const { obj } = test.context
+	test.is(obj.foo, null)
+	mock(obj, "quux", () => {
+		return true // passthrough/allow side effects
+	})
+	obj.quux()
+	test.is(obj.foo, "quux")
+	obj.foo = null
+	mock(obj, "quux", () => {
+		return false
+	})
+	obj.quux()
+	test.is(obj.foo, null)
 })
