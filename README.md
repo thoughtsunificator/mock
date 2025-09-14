@@ -8,7 +8,7 @@ mock library
 
 ### API
 
-When calling the [mock method](#mock-method) on any Object, the Object will have a `mock propery` set to a [Mock](#Mock) Object, the same Object is returned by the method.
+When ca
 
 #### mock method 
 
@@ -39,7 +39,7 @@ import mock from "@thoughtsunificator/mock"
 const mockProperty = mock(obj, "bar")
 assert.strictEqual(obj.bar, "bar")
 assert.strictEqual(mockProperty.callCount, 1)
-assert.strictEqual(obj.bar.mock.called, true)
+assert.strictEqual(mockProperty.called, true)
 ```
 
 #### Mock a method
